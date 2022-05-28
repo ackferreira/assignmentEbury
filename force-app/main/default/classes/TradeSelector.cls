@@ -9,6 +9,7 @@ public class TradeSelector {
         'Id',
         'BuyAmount__c',
         'BuyCurrency__c',
+        'CreatedDate',
         'Rate__c',
         'SellAmount__c',
         'SellCurrency__c',
