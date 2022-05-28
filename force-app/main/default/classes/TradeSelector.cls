@@ -29,7 +29,7 @@ public class TradeSelector {
         return this;
     }
 
-    public TradeSelector getWithLimit (Integer limitOf) {
+    public TradeSelector getWithLimit(Integer limitOf) {
         this.limitOf = limitOf;
         return this;
     }
@@ -50,7 +50,7 @@ public class TradeSelector {
         return this.query;
     }
 
-    public List<Trade__c> getData () {
+    public List<Trade__c> getData() {
         try {
             return (List<Trade__c>) Database.query( this.buildQuery() );
         }
