@@ -17,7 +17,6 @@ public with sharing class RestHttpRequester {
                 req.setHeader(headerKey, mapHeader.get(headerKey));
             }
         }
-
         if (String.isNotBlank(body)) {
             req.setBody(body);
         }

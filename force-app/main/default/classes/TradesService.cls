@@ -1,6 +1,7 @@
 public with sharing class TradesService {
     private String LATEST_RATE_CREDENTIAL = '5IAvTHrI45AxOzRrUSLckZGrAO6Ne2F7';
     private String LATEST_RATE_PATH       = 'FixerAPI/latest?symbols={0}&base={1}';
+    private Integer DEFAULT_LIMIT         = 10;
 
     private TradeSelector tradeSelector;
 
@@ -13,29 +14,40 @@ public with sharing class TradesService {
     }
 
     public List<Trade__c> getTrades(Integer limitOf) {
-        return tradeSelector.getOrderByCreatedDateDesc().getWithLimit(limitOf).getData();
+        Integer queryLimit = limitOf != null && limitOf >= 1 ? limitOf : DEFAULT_LIMIT;
+        return tradeSelector.getOrderByCreatedDateDesc().getWithLimit(queryLimit).getData();
     }
 
-    public LatestRates getLatestRates(String baseCurrency, List<String> currencies) {
+    public LatestRatesForCurrency getLatestRates(String baseCurrency, List<String> currencies) {
+        if (String.isBlank(baseCurrency)) {
+            throw new TradesServiceException('base Ccrrency not provided');
+        }
+        if (currencies == NULL || currencies.isEmpty()) {
+            throw new TradesServiceException('currencies not provided');
+        }
+
         String namedCredentialPath = String.format(LATEST_RATE_PATH, new List<Object>{ String.join(currencies, ','), baseCurrency });
         Map<String, String> mapHeader =  new Map<String, String>{ 'apikey' => LATEST_RATE_CREDENTIAL };
 
         HTTPResponse res = RestHttpRequester.send('GET', namedCredentialPath, null, mapHeader);
+        String s = res.getBody();
+        system.debug('res.getBody()>>>>>>>>>>>>>>>>>>>>>>');
+        system.debug(s);
 
         if (res.getStatusCode() == 200) {
-            return new LatestRates(res.getBody());
+            return new LatestRatesForCurrency(res.getBody());
         }
         throw new TradesServiceException('Error retrieving latest trades');
     }
 
-    public class LatestRates {
-        private String baseCurrency;
-        private Date rateDate;
-        private List<Rate> rates;
-        private String success;
-        private String timestamp;
+    public class LatestRatesForCurrency {
+        public String baseCurrency;
+        public Date rateDate;
+        public List<Rate> rates;
+        public String success;
+        public String timestamp;
 
-        public LatestRates(String bodyLatestRates) {
+        public LatestRatesForCurrency(String bodyLatestRates) {
             Map<String, Object> latestRatesMap  = (Map<String, Object>)JSON.deserializeUntyped(bodyLatestRates);
             Map<String, Object> currenciesRates = (Map<String, Object>)latestRatesMap.get('rates');
 
@@ -52,8 +64,8 @@ public with sharing class TradesService {
     }
 
     public class Rate {
-        private String currencyName;
-        private Double rate;
+        public String currencyName;
+        public Double rate;
 
         public Rate(String currencyName, Double rate) {
             this.currencyName = currencyName;
