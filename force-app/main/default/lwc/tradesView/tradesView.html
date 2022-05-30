@@ -1,16 +1,18 @@
 <template>
-    <lightning-layout multiple-rows>
-        <lightning-layout-item size="12">
-            <lightning-card title="Recent Trades">
-                <div slot="actions">
-                    <lightning-button label="New Trade" variant="brand" title="New Trade">
-                    </lightning-button>
-                </div>
-                <div class="slds-scrollable_y">
-                    <lightning-datatable key-field="Id" columns={columns} data={trades.data} hide-checkbox-column>
-                    </lightning-datatable>
-                </div>
-            </lightning-card>
-        </lightning-layout-item>
+    <lightning-layout class="slds-grid_align-space" multiple-rows>
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="small">
+            </lightning-spinner>
+        </template>
+        <lightning-card title="Recent Trades">
+            <lightning-button label="New Trade" variant="brand" title="New Trade" onclick={handleClick} slot="actions">
+            </lightning-button>
+            <lightning-datatable class="slds-scrollable_y" key-field="Id" columns={columns} data={trades.data}
+                hide-checkbox-column>
+            </lightning-datatable>
+        </lightning-card>
     </lightning-layout>
+    <template if:true={showNewTrade}>
+        <c-new-trade onfinishmodal={closeModal} onsave={handleSave}></c-new-trade>
+    </template>
 </template>
