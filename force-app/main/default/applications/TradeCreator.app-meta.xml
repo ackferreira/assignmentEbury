@@ -11,9 +11,9 @@
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
-    <label>Trade Createor</label>
+    <label>Trade Creator</label>
     <navType>Standard</navType>
     <tabs>Trade_Creator</tabs>
     <uiType>Lightning</uiType>
-    <utilityBar>Trade_Createor_UtilityBar</utilityBar>
+    <utilityBar>Trade_Creator_UtilityBar</utilityBar>
 </CustomApplication>
