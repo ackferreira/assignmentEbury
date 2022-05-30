@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SellAmountGreaterThanZero</fullName>
+    <active>true</active>
+    <errorConditionFormula>SellAmount__c &lt;= 0</errorConditionFormula>
+    <errorDisplayField>SellAmount__c</errorDisplayField>
+    <errorMessage>Sell Amount should be greater than 0</errorMessage>
+</ValidationRule>
