@@ -1,0 +1,101 @@
+<template>
+    <lightning-layout class="slds-modal slds-fade-in-open slds-backdrop">
+        <lightning-layout class="slds-modal__container">
+
+            <!--MODEAL HEADER-->
+            <lightning-layout class="slds-modal__header">
+                <h1 class="slds-card__header-title">New Trade</h1>
+                <lightning-button-icon icon-name="utility:close" alternative-text="Close this window" size="large"
+                    variant="bare-inverse" onclick={closeModal} class="slds-modal__close">
+                </lightning-button-icon>
+            </lightning-layout>
+
+            <!--RECORD EDIT FORM-->
+            <lightning-record-edit-form object-api-name={tradeObject} onload={handleFormLoad}
+                onsuccess={handleSaveSuccess}>
+                <!--MODEAL BODY-->
+                <lightning-layout size="12"
+                    class="slds-modal__content modalBody slds-var-p-around_medium slds-grid_align-space">
+                    <template if:true={isLoading}>
+                        <lightning-spinner alternative-text="Loading" size="small">
+                        </lightning-spinner>
+                    </template>
+
+                    <!--SELL VALUES-->
+                    <lightning-layout-item size="4" class="slds-var-p-horizontal_xx-small">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label slds-align_absolute-center">
+                                Sell Currency
+                            </label>
+                            <lightning-input-field name="sellCurrency" field-name={sellCurrencyField}
+                                variant="label-hidden" onchange={handleCurrencyChange} required>
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-form-element slds-var-p-vertical_xxx-small">
+                            <label class="slds-form-element__label slds-align_absolute-center">
+                                Sell Amount
+                            </label>
+                            <lightning-input-field name="sellAmount" field-name={sellAmountField} variant="label-hidden"
+                                onchange={handleSellAmountChange} required>
+                            </lightning-input-field>
+                        </div>
+                    </lightning-layout-item>
+
+                    <!--RATE VALUE-->
+                    <lightning-layout-item size="4" class="slds-var-p-horizontal_xx-small">
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label slds-align_absolute-center">
+                                Rate
+                            </label>
+                        </div>
+                        <lightning-layout size="12" class="slds-grid_align-space">
+                            <lightning-layout-item size="2">
+                                <lightning-icon icon-name="utility:right">
+                                </lightning-icon>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="8">
+                                <lightning-input-field name="rate" field-name={rateField} variant="label-hidden"
+                                    disabled>
+                                </lightning-input-field>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="2">
+                                <lightning-icon icon-name="utility:right">
+                                </lightning-icon>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </lightning-layout-item>
+
+                    <!--BUY VALUES-->
+                    <lightning-layout-item size="4" class="slds-var-p-horizontal_xx-small">
+                        <div class="slds-form-element ">
+                            <label class="slds-form-element__label slds-align_absolute-center">
+                                Buy Currency
+                            </label>
+                            <lightning-input-field name="buyCurrency" field-name={buyCurrencyField}
+                                variant="label-hidden" onchange={handleCurrencyChange} required>
+                            </lightning-input-field>
+                        </div>
+                        <div class="slds-form-element slds-var-p-vertical_xxx-small">
+                            <label class="slds-form-element__label slds-align_absolute-center">
+                                Buy Amount
+                            </label>
+                            <lightning-input-field name="buyAmount" value={buyAmountTeste} field-name={buyAmountField}
+                                variant="label-hidden" disabled>
+                            </lightning-input-field>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+
+                <!--MODEAL FOOTER-->
+                <lightning-layout size="12" class="slds-modal__footer">
+                    <lightning-button class="slds-var-m-left_x-small" icon-name="utility:save" label="save"
+                        type="submit" variant="brand">
+                    </lightning-button>
+                    <lightning-button icon-name="utility:close" label="close" variant="neutral" type="cancel"
+                        onclick={closeModal}>
+                    </lightning-button>
+                </lightning-layout>
+            </lightning-record-edit-form>
+        </lightning-layout>
+    </lightning-layout>
+</template>
