@@ -12,12 +12,33 @@ export default class TradesView extends LightningElement {
         { label: 'Date booked', fieldName: 'CreatedDate', type: 'date', typeAttributes: { year:"numeric", month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit" } }
     ];
 
+    isLoading = true;
     pageSize = 20;
     wiredTrades;
     trades;
+    showNewTrade = false;
 
-    @wire(getTrades, {limitOf: '$pageSize'})
+    @wire(getTrades, { limitOf: '$pageSize' })
     wiredTrades( result ) {
         this.trades = result;
+        this.isLoading = false;
+    }
+
+    handleClick() {
+        this.showNewTrade = true;
+    }
+
+    closeModal() {
+        this.showNewTrade = false;
+    }
+
+    handleSave() {
+        this.refreshTable();
+        this.closeModal();
+    }
+
+    async refreshTable() {
+        this.isLoading = true;
+        return refreshApex(this.trades);
     }
 }
