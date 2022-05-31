@@ -16,17 +16,23 @@ public class TradeSelector {
         'Name'
     };
 
-    public TradeSelector () {
+    public TradeSelector() {
         this(DEFAULT_FIELDS);
     }
 
-    public TradeSelector (Set<String> fields) {
+    public TradeSelector(Set<String> fields) {
         this.fields = fields;
         this.query = 'SELECT ';
     }
 
+    public TradeSelector getTradesWithIds(List<Id> tradeIds) {
+        this.conditions = String.isBlank(this.conditions) ? 'Id IN ' : this.conditions + ' AND ID IN ';
+        this.conditions += '(\'' + String.join(tradeIds, '\',\'') + '\')';
+        return this;
+    }
+
     public TradeSelector getOrderByCreatedDateDesc() {
-        orderBy = orderBy == null ? 'CreatedDate DESC' : orderBy + ', CreatedDate DESC';
+        this.orderBy = String.isBlank(this.orderBy) ? 'CreatedDate DESC' : this.orderBy + ', CreatedDate DESC';
         return this;
     }
 
