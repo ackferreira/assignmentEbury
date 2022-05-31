@@ -4,6 +4,7 @@ public class TradeSelector {
     private String conditions;
     private String orderBy;
     private Integer limitOf;
+    private SObjectRepository objectRepo;
 
     private static Set<String> DEFAULT_FIELDS = new Set<String>{
         'Id',
@@ -21,7 +22,12 @@ public class TradeSelector {
     }
 
     public TradeSelector(Set<String> fields) {
+        this(fields, new SObjectRepository());
+    }
+
+    public TradeSelector(Set<String> fields, SObjectRepository objectRepo) {
         this.fields = fields;
+        this.objectRepo = objectRepo;
         this.query = 'SELECT ';
     }
 
@@ -59,7 +65,7 @@ public class TradeSelector {
 
     public List<Trade__c> getData() {
         try {
-            return (List<Trade__c>) Database.query( this.buildQuery() );
+            return (List<Trade__c>) this.objectRepo.getRecords( this.buildQuery() );
         }
         catch(Exception ex) {
             throw new SelectorException('Error retrieving trade: ' + ex.getMessage() + ex.getStackTraceString());

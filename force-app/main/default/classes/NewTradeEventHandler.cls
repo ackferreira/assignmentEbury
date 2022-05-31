@@ -3,7 +3,11 @@ public with sharing class NewTradeEventHandler extends TriggerHandler {
     private TradeEventService tradeEventService;
 
     public NewTradeEventHandler() {
-        this.tradeEventService = new TradeEventService();
+        this(new TradeEventService());
+    }
+
+    public NewTradeEventHandler(TradeEventService eventService) {
+        this.tradeEventService = eventService;
     }
 
     public override void afterInsert() {

@@ -1,16 +1,23 @@
 public with sharing class TradesViewController {
+    @testVisible
+    private static TradesService tradeService;
+
+    private static TradesService getTradeService() {
+        if (tradeService == null) {
+            tradeService = new TradesService();
+        }
+        return tradeService;
+    }
 
     @AuraEnabled(cacheable=true)
     public static List<Trade__c> getTrades(Integer limitOf) {
-        TradesService tradeService = new TradesService();
-        return tradeService.getTrades(limitOf);
+        return getTradeService().getTrades(limitOf);
     }
     
     @AuraEnabled(cacheable=false)
     public static List<Rate> getRates(String baseCurrency) {
-        TradesService tradeService = new TradesService();
         //get currencies values
-        TradesService.LatestRatesForCurrency latestRates = tradeService.getLatestRates(
+        TradesService.LatestRatesForCurrency latestRates = getTradeService().getLatestRates(
             baseCurrency, 
             SObjectUtils.getPicklistValuesList('Trade__c', 'BuyCurrency__c')
         );
@@ -24,8 +31,7 @@ public with sharing class TradesViewController {
 
     @AuraEnabled(cacheable=false)
     public static String publishTradeEvent(Id tradeId) {
-        TradesService tradeService = new TradesService();
-        return tradeService.submitNewTradeEvent(tradeId);
+        return getTradeService().submitNewTradeEvent(tradeId);
     }
 
     public class Rate {

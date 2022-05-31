@@ -5,9 +5,17 @@ public with sharing class TradeEventService {
     private String MESSAGE_BODY_MODEL     = Label.NewTradeChatterMessage;
 
     private TradeSelector tradeSelector;
+    private SObjectRepository objectRepo;
+    private ChatterService chatterService;
 
     public TradeEventService() {
+        this(new SObjectRepository(), new ChatterService());
+    }
+
+    public TradeEventService(SObjectRepository objectRepo, ChatterService chatterService) {
         this.tradeSelector = new TradeSelector();
+        this.objectRepo = objectRepo;
+        this.chatterService = chatterService;
     }
 
     public void postNewTradeMessageToQueueMembers(List<Id> tradeIds, String queueName) {
@@ -18,13 +26,19 @@ public with sharing class TradeEventService {
         for (Trade__c trade : trades) {
             messages.add(buildMessage(trade));
         }
-        ChatterUtils.postMessagesTo(userIdsToPost, messages);
+        chatterService.postMessagesTo(userIdsToPost, messages);
     }
 
     private Set<Id> getQueueMembersIds(String queueName) {
         Set<Id> userIds = new Set<Id>();
-        Map<Id, Group> queues = new Map<Id, Group>([SELECT Id FROM Group WHERE Type='Queue' AND DeveloperName=:queueName]);
-        for (GroupMember member : [SELECT UserOrGroupId FROM GroupMember WHERE GroupId IN :queues.keySet()]) {
+        List<Group> groups = (List<Group>)this.objectRepo.getRecords(
+            'SELECT Id FROM Group WHERE Type=\'Queue\' AND DeveloperName=\'' + queueName + '\''
+        );
+        Set<Id> queuesIds = (new Map<Id, Group>(groups)).keySet();
+        List<GroupMember> members = (List<GroupMember>)this.objectRepo.getRecords(
+            'SELECT UserOrGroupId FROM GroupMember WHERE GroupId IN (\''+ String.join(new List<Id>(queuesIds),'\',\'') +'\')'
+        );
+        for (GroupMember member : members) {
             userIds.add(member.UserOrGroupId);
         }
         return userIds;
