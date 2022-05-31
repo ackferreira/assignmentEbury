@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>NewTradeChatterMessage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>NewTradeChatterMessage</shortDescription>
+        <value>A new trade has been created with the following data:
+Sell Currency: {0}
+Sell Amount: {1}
+Buy Currency: {2}
+Buy Amount: {3}
+Rate: {4}
+Booked Date: {5}
+Link to the trade: {6}</value>
+    </labels>
+</CustomLabels>
