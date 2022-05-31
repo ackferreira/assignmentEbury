@@ -15,7 +15,17 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>context</name>
-                    <value>BOOKMARKS</value>
+                    <value>GLOBAL</value>
+                </componentInstanceProperties>
+                <componentName>forceChatter:publisher</componentName>
+                <identifier>forceChatter_publisher1</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>context</name>
+                    <value>NEWS</value>
                 </componentInstanceProperties>
                 <componentName>forceChatter:exposedFeed</componentName>
                 <identifier>forceChatter_exposedFeed1</identifier>
