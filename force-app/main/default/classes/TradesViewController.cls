@@ -22,6 +22,12 @@ public with sharing class TradesViewController {
         return rates;
     }
 
+    @AuraEnabled(cacheable=false)
+    public static String publishTradeEvent(Id tradeId) {
+        TradesService tradeService = new TradesService();
+        return tradeService.submitNewTradeEvent(tradeId);
+    }
+
     public class Rate {
         @AuraEnabled
         public String toCurrency;
