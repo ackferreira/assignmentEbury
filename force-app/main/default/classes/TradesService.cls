@@ -1,16 +1,20 @@
 public with sharing class TradesService {
-    private String LATEST_RATE_CREDENTIAL = '5IAvTHrI45AxOzRrUSLckZGrAO6Ne2F7';
-    private String LATEST_RATE_PATH       = 'FixerAPI/latest?symbols={0}&base={1}';
-    private Integer DEFAULT_LIMIT         = 10;
+    @TestVisible
+    private static String LATEST_RATE_CREDENTIAL = '5IAvTHrI45AxOzRrUSLckZGrAO6Ne2F7';
+    @TestVisible
+    private static String LATEST_RATE_PATH = 'FixerAPI/latest?symbols={0}&base={1}';
+    private static Integer DEFAULT_LIMIT   = 10;
 
     private TradeSelector tradeSelector;
+    private RestHttpRequester requester;
 
     public TradesService() {
-        this(new TradeSelector());
+        this(new TradeSelector(), new RestHttpRequester());
     }
 
-    public TradesService(TradeSelector tradeSelector) {
+    public TradesService(TradeSelector tradeSelector, RestHttpRequester requester) {
         this.tradeSelector = tradeSelector;
+        this.requester = requester;
     }
 
     public List<Trade__c> getTrades(Integer limitOf) {
@@ -48,34 +52,13 @@ public with sharing class TradesService {
         String namedCredentialPath = String.format(LATEST_RATE_PATH, new List<Object>{ String.join(currencies, ','), baseCurrency });
         Map<String, String> mapHeader =  new Map<String, String>{ 'apikey' => LATEST_RATE_CREDENTIAL };
 
-        DateTime start = System.Now();
-        while(System.Now().getTime()< start.getTime()+800){}
-
-        switch on baseCurrency {
-            when 'USD' {
-                return new LatestRatesForCurrency('{"success": true,"timestamp": 1653851464,"base": "USD", "date": "2022-05-29", "rates": { "USD": 1, "EUR": 0.931505,"BRL": 4.731022}}');
-            }
-            when 'EUR' {
-                return new LatestRatesForCurrency('{"success": true,"timestamp": 1653851535,"base": "EUR","date": "2022-05-29","rates": {"USD": 1.073532, "EUR": 1,"BRL": 5.078864}}');
-            }
-            when 'BRL' {
-                return new LatestRatesForCurrency('{"success": true, "timestamp": 1653851583,"base": "BRL", "date": "2022-05-29", "rates": {"USD": 0.211371, "EUR": 0.196893, "BRL": 1}}');
-            }
-            when else {
-                throw new TradesServiceException('Error retrieving latest trades');
-            }
-        }
-
-/*
-        HTTPResponse res = RestHttpRequester.send('GET', namedCredentialPath, null, mapHeader);
+        HTTPResponse res = requester.send('GET', namedCredentialPath, null, mapHeader);
         String s = res.getBody();
-        system.debug('res.getBody()>>>>>>>>>>>>>>>>>>>>>>');
-        system.debug(s);
 
         if (res.getStatusCode() == 200) {
             return new LatestRatesForCurrency(res.getBody());
         }
-        throw new TradesServiceException('Error retrieving latest trades');*/
+        throw new TradesServiceException('Error retrieving latest trades');
     }
 
     public class LatestRatesForCurrency {

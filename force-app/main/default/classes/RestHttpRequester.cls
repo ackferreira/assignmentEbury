@@ -1,6 +1,7 @@
 public with sharing class RestHttpRequester {
+    public RestHttpRequester() {}
 
-    public static HTTPResponse send(String method, String namedCredential, String body, Map<String, String> mapHeader) {
+    public HTTPResponse send(String method, String namedCredential, String body, Map<String, String> mapHeader) {
         if (String.isBlank(method)) {
             throw new RequesterException('Method not provided');
         }

@@ -9,11 +9,11 @@ public with sharing class TradeEventService {
     private ChatterService chatterService;
 
     public TradeEventService() {
-        this(new SObjectRepository(), new ChatterService());
+        this(new TradeSelector(), new SObjectRepository(), new ChatterService());
     }
 
-    public TradeEventService(SObjectRepository objectRepo, ChatterService chatterService) {
-        this.tradeSelector = new TradeSelector();
+    public TradeEventService(TradeSelector tradeSelector, SObjectRepository objectRepo, ChatterService chatterService) {
+        this.tradeSelector = tradeSelector;
         this.objectRepo = objectRepo;
         this.chatterService = chatterService;
     }
@@ -29,6 +29,7 @@ public with sharing class TradeEventService {
         chatterService.postMessagesTo(userIdsToPost, messages);
     }
 
+    @TestVisible
     private Set<Id> getQueueMembersIds(String queueName) {
         Set<Id> userIds = new Set<Id>();
         List<Group> groups = (List<Group>)this.objectRepo.getRecords(
@@ -44,14 +45,15 @@ public with sharing class TradeEventService {
         return userIds;
     }
 
+    @TestVisible
     private String buildMessage(Trade__c trade) {
         List<Object> msgInfo = new List<Object>{
             trade.SellCurrency__c,
-            trade.SellAmount__c.format(),
+            trade.SellAmount__c?.format(),
             trade.BuyCurrency__c,
-            trade.BuyAmount__c.format(),
-            trade.Rate__c.format(),
-            Trade.CreatedDate.format(),
+            trade.BuyAmount__c?.format(),
+            trade.Rate__c?.format(),
+            Trade.CreatedDate?.format(),
             URL.getSalesforceBaseUrl().toExternalForm() + '/' + trade.Id
         };
         return String.format(MESSAGE_BODY_MODEL, msgInfo);
