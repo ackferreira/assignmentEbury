@@ -1,6 +1,7 @@
 import { LightningElement } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getRates from '@salesforce/apex/TradesViewController.getRates';
+import publishTradeEvent from '@salesforce/apex/TradesViewController.publishTradeEvent';
 import TRADE_OBJECT from '@salesforce/schema/Trade__c';
 import SELL_CURRENCY from '@salesforce/schema/Trade__c.SellCurrency__c';
 import BUY_CURRENCY from '@salesforce/schema/Trade__c.BuyCurrency__c';
@@ -63,12 +64,40 @@ export default class NewTrade extends LightningElement {
         }
         catch (ex) {
             let errorMessage = 'Error retrieving rates for selected Currency';
-            this.toastMessage(`${errorMessage} - ${e.message}`, 'ERROR', ERROR_VARIANT);
+            this.toastMessage(`${errorMessage} - ${ex.body.message}`, 'ERROR', ERROR_VARIANT);
             console.log(e);
         }
         finally {
             this.isLoading = false;
         }
+    }
+
+    async sendTradeEvent(tradeId) {
+        try {
+            let eventBusId = await publishTradeEvent({
+                tradeId: tradeId
+            });
+            console.log('sendTradeEvent', eventBusId);
+            return eventBusId;
+        }
+        catch (ex) {
+            let errorMessage = 'Error publishing event';
+            this.toastMessage(`${errorMessage} - ${ex.body.message}`, 'ERROR', ERROR_VARIANT);
+            console.log(ex);
+        }
+        finally {
+            this.isLoading = false;
+        }
+    }
+    
+    async handleSaveSuccess(event) {
+        this.isLoading = true;
+        this.toastMessage('Trade saved with success!', 'Success', SUCCESS_VARIANT);
+
+        await this.sendTradeEvent(event.detail.id);
+        
+        const saveTrade = new CustomEvent('save');
+        this.dispatchEvent(saveTrade);
     }
 
     handleSellAmountChange() {
@@ -97,19 +126,10 @@ export default class NewTrade extends LightningElement {
         });
         this.updateFormValue('buyAmount', rate*sellAmount);
     }
-
-    /* --- suport methods --- */
-
+    
     closeModal() {
         const finishModal = new CustomEvent('finishmodal');
         this.dispatchEvent(finishModal);
-    }
-
-    handleSaveSuccess(event) {
-        this.isLoading = true;
-        const saveTrade = new CustomEvent('save');
-        this.dispatchEvent(saveTrade);
-        this.toastMessage('Trade saved with success!', 'Success', SUCCESS_VARIANT);
     }
 
     handleFormLoad() {
