@@ -27,3 +27,6 @@ sfdx force:apex:execute -f scripts/setup.apex -u $SCRATCH_ORG_ALIAS
 
 echo "Running Apex Tests"
 execute sfdx force:apex:test:run -l RunLocalTests --synchronous
+
+echo "Open org"
+execute sfdx force:org:test:run -l RunLocalTests --synchronous
